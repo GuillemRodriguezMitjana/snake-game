@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // src/components/GameBoard.js
 
 import { useState, useEffect } from 'react';
@@ -12,6 +13,30 @@ const GameBoard = () => {
     const [food, setFood] = useState(initialFood);
     const [direction, setDirection] = useState({ x: 1, y: 0 });
     const [gameOver, setGameOver] = useState(false);
+
+    const [score, setScore] = useState(0);
+    const [countdown, setCountdown] = useState(3);
+    const [gameStarted, setGameStarted] = useState(false);
+
+    useEffect(() => {
+        if (countdown === 0) setGameStarted(true);
+        else {
+            const timer = setInterval(() => {
+                setCountdown((prev) => prev - 1);
+            }, 1000);
+            return () => clearInterval(timer);
+        }
+    }, [countdown]);
+
+    const restartGame = () => {
+        setSnake(initialSnake);
+        setFood(initialFood);
+        setDirection({ x: 1, y: 0 });
+        setGameOver(false);
+        setScore(0);
+        setCountdown(3);
+        setGameStarted(false);
+    }
 
     useEffect(() => {
         const handleKeyDown = (e) => {
@@ -38,7 +63,7 @@ const GameBoard = () => {
     }, []);
 
     useEffect(() => {
-        if (gameOver) return;
+        if (gameOver || !gameStarted) return;
 
         const moveSnake = () => {
             const newSnake = [...snake];
@@ -65,6 +90,7 @@ const GameBoard = () => {
                     x: Math.floor(Math.random() * boardSize),
                     y: Math.floor(Math.random() * boardSize)
                 });
+                setScore(score + 1);
             } else {
                 newSnake.pop();
             }
@@ -74,16 +100,30 @@ const GameBoard = () => {
 
         const interval = setInterval(moveSnake, 200);
         return () => clearInterval(interval);
-    }, [snake, direction, food, gameOver]);
+    }, [snake, direction, food, gameOver, gameStarted]);
+
+    const getHeadDirectionClass = () => {
+        if (direction.y === -1) return "up";
+        if (direction.y === 1) return "down";
+        if (direction.x === 1) return "right";
+        if (direction.x === -1) return "left";
+        return "";
+    }
 
     return (
         <div className="board">
+            {countdown > 0 && !gameStarted && (
+                <div className="countdown">{countdown}</div>
+            )}
+            <div className="score">Score: {score}</div>
             {Array.from({ length: boardSize }).map((_, row) =>
                 Array.from({ length: boardSize }).map((_, col) => (
                     <div
                         key={`${row}-${col}`}
                         className={`cell ${
-                            snake.some(segment => segment.x === col && segment.y === row)
+                            snake.some((segment, index) => segment.x === col && segment.y === row && index === 0)
+                                ? `snake head ${getHeadDirectionClass()}`
+                                : snake.some((segment, index) => segment.x === col && segment.y === row && index !== 0)
                                 ? 'snake'
                                 : food.x === col && food.y === row
                                 ? 'food'
@@ -92,7 +132,14 @@ const GameBoard = () => {
                     />
                 ))
             )}
-            {gameOver && <div className="game-over">Game Over</div>}
+            {gameOver && 
+                <div className="game-over">
+                    <div>Game Over</div>
+                    <button onClick={restartGame}>
+                    <i className="fa-solid fa-arrow-rotate-left"></i>
+                    </button>
+                </div>
+            }
         </div>
     );
 };

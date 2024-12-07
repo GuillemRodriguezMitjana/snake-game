@@ -6,20 +6,61 @@
     grid-template-rows: repeat(10, 20px);
     gap: 1px;
     position: relative;
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
 }
 
 .cell {
     width: 20px;
     height: 20px;
-    background-color: lightgrey;
+    background-color: white;
 }
 
 .cell.snake {
-    background-color: green;
+    background-color: rgba(0, 200, 0);
+}
+
+.cell.snake.head {
+    position: relative;
+    background-color: white;
+}
+
+.cell.snake.head::before {
+    content: " ";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 200, 0);
+}
+
+.cell.snake.head.up::before {
+    border-top-left-radius: 40%;
+    border-top-right-radius: 40%;
+}
+
+.cell.snake.head.down::before {
+    border-bottom-left-radius: 40%;
+    border-bottom-right-radius: 40%;
+}
+
+.cell.snake.head.right::before {
+    border-top-right-radius: 40%;
+    border-bottom-right-radius: 40%;
+}
+
+.cell.snake.head.left::before {
+    border-top-left-radius: 40%;
+    border-bottom-left-radius: 40%;
 }
 
 .cell.food {
-    background-color: red;
+    background-image: url("../../public/apple.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .game-over {
@@ -27,7 +68,62 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 24px;
+    font-size: 20px;
+    line-height: 25px;
     font-weight: bold;
-    color: red;
+    color: white;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 1);
+    text-align: center;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+}
+
+.game-over button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 24px;
+    background-color: #45b149;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.game-over button:hover {
+    background-color: #337e37;
+}
+
+.score {
+    position: absolute;
+    bottom: -35px;
+    font-size: 14px;
+    color: #eee;
+    text-shadow: 2px 2px 0px #333;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 5px 10px;
+    border-radius: 20px;
+}
+
+.countdown {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 48px;
+    font-weight: bold;
+    color: rgb(196, 79, 79);
+    text-shadow: 2px 2px 0px #333;
+    z-index: 10;
 }
