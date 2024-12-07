@@ -111,38 +111,35 @@ const GameBoard = () => {
     }
 
     return (
-        <div className="App">
-            <h1>Snake Game</h1>
-            <div className="board">
-                {countdown > 0 && !gameStarted && (
-                    <div className="countdown">{countdown}</div>
-                )}
-                <div className="score">Score: {score}</div>
-                {Array.from({ length: boardSize }).map((_, row) =>
-                    Array.from({ length: boardSize }).map((_, col) => (
-                        <div
-                            key={`${row}-${col}`}
-                            className={`cell ${
-                                snake.some((segment, index) => segment.x === col && segment.y === row && index === 0)
-                                    ? `snake head ${getHeadDirectionClass()}`
-                                    : snake.some((segment, index) => segment.x === col && segment.y === row && index !== 0)
-                                    ? 'snake'
-                                    : food.x === col && food.y === row
-                                    ? 'food'
-                                    : ''
-                            }`}
-                        />
-                    ))
-                )}
-                {gameOver && 
-                    <div className="game-over">
-                        <div>Game Over</div>
-                        <button onClick={restartGame}>
-                        <i className="fa-solid fa-arrow-rotate-left"></i>
-                        </button>
-                    </div>
-                }
-            </div>
+        <div className="board">
+            {countdown > 0 && !gameStarted && (
+                <div className="countdown">{countdown}</div>
+            )}
+            <div className="score">Score: {score}</div>
+            {Array.from({ length: boardSize }).map((_, row) =>
+                Array.from({ length: boardSize }).map((_, col) => (
+                    <div
+                        key={`${row}-${col}`}
+                        className={`cell ${
+                            snake.some((segment, index) => segment.x === col && segment.y === row && index === 0)
+                                ? `snake head ${getHeadDirectionClass()}`
+                                : snake.some((segment, index) => segment.x === col && segment.y === row && index !== 0)
+                                ? 'snake'
+                                : food.x === col && food.y === row
+                                ? 'food'
+                                : ''
+                        }`}
+                    />
+                ))
+            )}
+            {gameOver && 
+                <div className="game-over">
+                    <div>Game Over</div>
+                    <button onClick={restartGame}>
+                    <i className="fa-solid fa-arrow-rotate-left"></i>
+                    </button>
+                </div>
+            }
         </div>
     );
 };
