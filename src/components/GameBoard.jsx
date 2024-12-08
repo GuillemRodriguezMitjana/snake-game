@@ -4,21 +4,44 @@ import { useState, useEffect } from 'react';
 import "./GameBoard.css"
 
 // Mida del tauler
-const boardSize = 10;
+const boardSize = 11;
 
-// Estat inicial
-const initialSnake = [{ x: 2, y: 2 }];
-const initialFood = { x: 5, y: 5 };
+// Funció per obtenir una posició aleatòria (vores excloses) diferent de 'pos'
+const getRandomPosition = (pos = {x: 0, y: 0}) => {
+    let randomPos = { x: 0, y: 0 }
+
+    do {
+        randomPos = {
+            x: Math.floor(Math.random() * (boardSize - 2) + 1),
+            y: Math.floor(Math.random() * (boardSize - 2) + 1),
+        }
+    } while (randomPos.x === pos.x && randomPos.y === pos.y);
+
+    return randomPos;
+};
+
+// Funció per obtenir una direcció aleatòria
+const getRandomDirection = () => {
+    const directions = [
+        { x: 0, y: -1 },
+        { x: 0, y: 1 },
+        { x: -1, y: 0 },
+        { x: 1, y: 0 },
+    ];
+    return directions[Math.floor(Math.random() * directions.length)];
+};
 
 const GameBoard = () => {
     // Carregar estat inicial
-    const [snake, setSnake] = useState(initialSnake);
-    const [food, setFood] = useState(initialFood);
-    const [direction, setDirection] = useState({ x: 1, y: 0 });
+    const [snake, setSnake] = useState([getRandomPosition()]);
+    const [food, setFood] = useState(getRandomPosition(snake));
+    const [direction, setDirection] = useState(getRandomDirection());
     const [gameOver, setGameOver] = useState(false);
     const [score, setScore] = useState(0);
     const [countdown, setCountdown] = useState(3);
     const [gameStarted, setGameStarted] = useState(false);
+    const [turning, setTurning] = useState(false);
+    const [gameWon, setGameWon] = useState(false);
 
     // Countdown inicial de 3 segons
     useEffect(() => {
@@ -33,30 +56,35 @@ const GameBoard = () => {
 
     // Funció per reiniciar el joc
     const restartGame = () => {
-        setSnake(initialSnake);
-        setFood(initialFood);
-        setDirection({ x: 1, y: 0 });
+        setSnake([getRandomPosition()]);
+        setFood(getRandomPosition(snake));
+        setDirection(getRandomDirection());
         setGameOver(false);
         setScore(0);
         setCountdown(3);
         setGameStarted(false);
+        setTurning(false);
+        setGameWon(false);
     }
 
     // Gestionar les tecles per a la serp
     useEffect(() => {
         const handleKeyDown = (e) => {
+            if (turning) return;
+            else setTurning(true);
+
             switch (e.key) {
                 case 'ArrowUp':
-                    setDirection({ x: 0, y: -1 });
+                    if (snake.length === 1 || direction.y === 0) setDirection({ x: 0, y: -1 });
                     break;
                 case 'ArrowDown':
-                    setDirection({ x: 0, y: 1 });
+                    if (snake.length === 1 || direction.y === 0) setDirection({ x: 0, y: 1 });
                     break;
                 case 'ArrowLeft':
-                    setDirection({ x: -1, y: 0 });
+                    if (snake.length === 1 || direction.x === 0) setDirection({ x: -1, y: 0 });
                     break;
                 case 'ArrowRight':
-                    setDirection({ x: 1, y: 0 });
+                    if (snake.length === 1 || direction.x === 0) setDirection({ x: 1, y: 0 });
                     break;
                 default:
             }
@@ -64,12 +92,12 @@ const GameBoard = () => {
 
         document.addEventListener('keydown', handleKeyDown);
         return () => document.removeEventListener('keydown', handleKeyDown);
-    }, []);
+    }, [direction, snake, turning]);
     
     // Gestionar moviment de la serp i comprovar col·lisions
     useEffect(() => {
         // Funció per generar una posició del menjar on no estigui la serp
-        const generateFoodPosition = () => {
+        const generateFoodPosition = (snake) => {
             let newFoodPosition;
             let isFoodOnSnake = true;
     
@@ -85,7 +113,7 @@ const GameBoard = () => {
             return newFoodPosition;
         }
 
-        if (gameOver || !gameStarted) return;
+        if (gameOver || !gameStarted || gameWon) return;
 
         // Funció per moure la serp
         const moveSnake = () => {
@@ -110,19 +138,25 @@ const GameBoard = () => {
 
             // Comprovar menjar
             if (newHead.x === food.x && newHead.y === food.y) {
-                setFood(generateFoodPosition());
+                setFood(generateFoodPosition(newSnake));
                 setScore(score + 1);
+
+                if (score + 1 >= boardSize * boardSize) {
+                    setGameWon(true);
+                }
             } else {
                 newSnake.pop();
             }
 
             // Actualitzar serp
             setSnake(newSnake);
+
+            setTurning(false);
         };
 
         const interval = setInterval(moveSnake, 200);
         return () => clearInterval(interval);
-    }, [snake, direction, food, gameOver, gameStarted, score]);
+    }, [snake, direction, food, gameOver, gameStarted, score, gameWon]);
 
     // Funció per obtenir la direcció de la serp
     const getHeadDirectionClass = () => {
@@ -155,9 +189,17 @@ const GameBoard = () => {
                     />
                 ))
             )}
-            {gameOver && 
+            {gameOver && !gameWon &&
                 <div className="game-over">
                     <div>Game Over</div>
+                    <button onClick={restartGame}>
+                        <i className="fa-solid fa-arrow-rotate-left"></i>
+                    </button>
+                </div>
+            }
+            {gameWon &&
+                <div className="game-over">
+                    <div>You Win!</div>
                     <button onClick={restartGame}>
                         <i className="fa-solid fa-arrow-rotate-left"></i>
                     </button>
