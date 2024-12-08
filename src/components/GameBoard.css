@@ -1,5 +1,3 @@
-/* src/components/GameBoard.css */
-
 .board {
     display: grid;
     grid-template-columns: repeat(10, 20px);
@@ -57,7 +55,7 @@
 }
 
 .cell.food {
-    background-image: url("../../public/apple.png");
+    background-image: url("/apple.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

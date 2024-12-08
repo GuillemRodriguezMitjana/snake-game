@@ -1,0 +1,93 @@
+:root {
+    --player-1-main: rgba(0, 200, 0);
+    --player-2-main: rgba(0, 0, 200);
+}
+
+.board {
+    grid-template-columns: repeat(25, 20px);
+    grid-template-rows: repeat(25, 20px);
+}
+
+.cell.snake1 {
+    background-color: var(--player-1-main);
+}
+
+.cell.snake2 {
+    background-color: var(--player-2-main);
+}
+
+.cell.snake1.head,
+.cell.snake2.head {
+    position: relative;
+    background-color: white;
+}
+
+.cell.snake1.head::before,
+.cell.snake2.head::before {
+    content: " ";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.cell.snake1.head::before {
+    background-color: var(--player-1-main);
+}
+
+.cell.snake2.head::before {
+    background-color: var(--player-2-main);
+}
+
+.cell.snake1.head.up::before,
+.cell.snake2.head.up::before {
+    border-top-left-radius: 40%;
+    border-top-right-radius: 40%;
+}
+
+.cell.snake1.head.down::before,
+.cell.snake2.head.down::before {
+    border-bottom-left-radius: 40%;
+    border-bottom-right-radius: 40%;
+}
+
+.cell.snake1.head.right::before,
+.cell.snake2.head.right::before {
+    border-top-right-radius: 40%;
+    border-bottom-right-radius: 40%;
+}
+
+.cell.snake1.head.left::before,
+.cell.snake2.head.left::before {
+    border-top-left-radius: 40%;
+    border-bottom-left-radius: 40%;
+}
+
+.score {
+    width: calc(100% - 20px);
+    display: flex;
+    justify-content: space-between;
+    bottom: -45px;
+}
+
+.score p {
+    margin: 5px;
+}
+
+.player-title-1,
+.player-title-2 {
+    text-align: center;
+    margin-top: 5px;
+    color: #eee;
+}
+
+.player-title-1,
+.score-1 {
+    text-shadow: 2px 2px 0px var(--player-1-main);
+}
+
+.player-title-2,
+.score-2 {
+    text-shadow: 2px 2px 0px var(--player-2-main);
+}

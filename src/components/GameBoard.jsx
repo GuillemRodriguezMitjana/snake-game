@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-// src/components/GameBoard.js
 
 import { useState, useEffect } from 'react';
 import './GameBoard.css';
