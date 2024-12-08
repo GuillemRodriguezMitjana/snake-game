@@ -256,7 +256,20 @@ const GameBoard2P = ({ player }) => {
                 )}
                 {state.gameOver && (
                     <div className="game-over">
-                        <div>Game Over</div>
+                        <div className="game-over-title">Game Over</div>
+                        {state.score1 > state.score2 ? (
+                            <div className="winner-message">
+                                <i className="fa-solid fa-trophy"></i>
+                                Player 1
+                            </div>
+                        ) : state.score2 > state.score1 ? (
+                            <div className="winner-message">
+                                <i className="fa-solid fa-trophy"></i>
+                                Player 2
+                            </div>
+                        ) : (
+                            <div className="winner-message">Draw!</div>
+                        )}
                         <button onClick={restartGame}>
                             <i className="fa-solid fa-arrow-rotate-left"></i>
                         </button>
