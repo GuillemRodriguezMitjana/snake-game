@@ -7,7 +7,6 @@ import { ref, onValue, set } from "firebase/database";
 import database from "../firebase";
 
 // Estils
-import "./GameBoard.css";
 import "./GameBoard2P.css";
 
 // Mida del tauler
@@ -202,13 +201,13 @@ const GameBoard2P = ({ player }) => {
     return (
         <div>
             <h3 className={`player-title-${player}`}>Player {player}</h3>
-            <div className="board">
+            <div className="board-2p">
                 {state.countdown > 0 && !state.gameStarted && 
                     <div className="countdown">
                         {state.countdown}
                     </div>
                 }
-                <div className="score">
+                <div className="score-2p">
                     <p>Player 1: <span className="score-1">{state.score1}</span></p>
                     <p>Player 2: <span className="score-2">{state.score2}</span></p>
                 </div>

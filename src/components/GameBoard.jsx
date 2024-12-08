@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { useState, useEffect } from 'react';
-import './GameBoard.css';
+import "./GameBoard.css"
 
 const boardSize = 10;
 const initialSnake = [{ x: 2, y: 2 }];
