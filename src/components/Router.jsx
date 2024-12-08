@@ -1,4 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+
+import Navbar from "./Navbar";
 import GameBoard from "./GameBoard";
 import GameBoard2P from "./GameBoard2P";
 import NotFound from "./NotFound"
@@ -6,6 +8,7 @@ import NotFound from "./NotFound"
 const Router = () => {
     return(
         <BrowserRouter>
+            <Navbar />
             <Routes>
                 <Route path="/" element={<GameBoard />} />
                 <Route path="/snake1" element={<GameBoard2P player="1" />} />

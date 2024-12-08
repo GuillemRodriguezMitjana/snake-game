@@ -71,7 +71,7 @@ const GameBoard2P = ({ player }) => {
         }
     }, []);
 
-    // Reiniciar el joc quan un jugador es desconnecti
+    // Reiniciar el joc quan un jugador es desconnecta
     useEffect(() => {
         if (!snake1Active || !snake2Active) {
             updateStateInFirebase(initialState);
