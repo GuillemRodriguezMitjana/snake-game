@@ -5,6 +5,7 @@ import daaw.snakegamebff.repositories.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,6 +56,20 @@ public class PlayerService {
      */
     public List<Player> getAllPlayers() {
         return playerRepository.findAll();
+    }
+
+    /**
+     * Funció per obtenir els jugadors ordenats per la seva millor puntuació (descendent)
+     * @return Llista de jugadors ordenada per puntuació
+     */
+    public List<Player> getTopPlayers() {
+        // Obtenir tots els jugadors
+        List<Player> players = playerRepository.findAll();
+
+        // Ordernar-los per la millor puntuació de manera descendent
+        players.sort((player1, player2) -> Integer.compare(player2.getBestScore(), player1.getBestScore()));
+
+        return players;
     }
 
 }

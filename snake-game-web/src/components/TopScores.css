@@ -1,0 +1,15 @@
+.top-scores {
+    text-align: center;
+}
+
+.top-scores table th {
+    color: #eee;
+    text-shadow: 2px 2px 0px #333;
+    font-size: 13px;
+    padding-bottom: 10px;
+}
+
+.top-scores table td {
+    padding: 5px 30px;
+    font-size: 13px;
+}

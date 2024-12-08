@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -38,6 +39,15 @@ public class Player {
 
     public void addScore(int score) {
         this.scores.add(score);
+    }
+
+    /**
+     * Funció per obtenir la millor puntuació d'una jugador.
+     * @return Puntuació més alta
+     */
+    public int getBestScore() {
+        if (scores.isEmpty()) return 0;
+        return Collections.max(scores);
     }
 
 }

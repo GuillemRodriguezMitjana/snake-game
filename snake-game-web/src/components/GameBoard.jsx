@@ -32,7 +32,7 @@ const getRandomDirection = () => {
 };
 
 const GameBoard = () => {
-    // Carregar estat inicial
+    // Carregar estats inicials
     const [snake, setSnake] = useState([getRandomPosition()]);
     const [food, setFood] = useState(getRandomPosition(snake));
     const [direction, setDirection] = useState(getRandomDirection());

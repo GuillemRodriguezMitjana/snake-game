@@ -21,11 +21,9 @@
     padding: 0;
 }
 
-.navbar ul li {
-    display: inline;
-}
-
 .navbar ul li a {
+    display: flex;
+    align-items: center;
     color: #eee;
     text-shadow: 2px 2px 0px #000;
     text-decoration: none;
@@ -37,6 +35,14 @@
     text-shadow: 2px 2px 0px #aaa;
 }
 
-.separator {
-    font-size: 12px;
+.navbar ul li a:hover .nav-trophy {
+    color: rgb(165, 165, 31) !important;
+    text-shadow: 2px 2px 0px #000;
+}
+
+.nav-trophy {
+    color: white !important;
+    font-size: 14px;
+    margin-right: 3px;
+    transition: color .5s ease;
 }

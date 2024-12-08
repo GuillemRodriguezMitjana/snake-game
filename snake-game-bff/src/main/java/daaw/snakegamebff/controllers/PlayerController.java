@@ -61,4 +61,13 @@ public class PlayerController {
         return ResponseEntity.ok(playerService.getAllPlayers());
     }
 
+    /**
+     * Endpoint per obtenir tots els jugadors ordenats descendentment per la seva millor puntuació.
+     * @return Llista de jugadors ordenada per millor puntuació
+     */
+    @GetMapping("/top-scores")
+    public ResponseEntity<List<Player>> getTopPlayers() {
+        return ResponseEntity.ok(playerService.getTopPlayers());
+    }
+
 }

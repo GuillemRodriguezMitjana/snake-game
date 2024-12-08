@@ -38,7 +38,7 @@ const sendScoreToAPI = async (playerName, score) => {
 }
 
 const GameBoard2P = ({ player }) => {
-    // Carregar estat inicial
+    // Carregar estats inicials
     const [state, setState] = useState(initialState);
     const [turning, setTurning] = useState(false);
     const [snake1Active, setSnake1Active] = useState(false);
