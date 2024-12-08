@@ -14,7 +14,7 @@ const boardSize = 21;
 // Estat inicial
 const initialState = {
     snake1: [{ x: 2, y: 2 }],
-    snake2: [{ x: boardSize-2, y: boardSize-2 }],
+    snake2: [{ x: boardSize - 2, y: boardSize - 2 }],
     food: { x: Math.floor(boardSize / 2), y: Math.floor(boardSize / 2) },
     direction1: { x: 1, y: 0 },
     direction2: { x: -1, y: 0 },
@@ -28,6 +28,7 @@ const initialState = {
 const GameBoard2P = ({ player }) => {
     // Carregar estat inicial
     const [state, setState] = useState(initialState);
+    const [turning, setTurning] = useState(false);
 
     // Obtenir estat de firebase i subscriure's per obtenir nous canvis
     useEffect(() => {
@@ -67,35 +68,54 @@ const GameBoard2P = ({ player }) => {
     // Gestionar les tecles per a les serps
     useEffect(() => {
         const handleKeyDown = (e) => {
+            if (turning) return;
+            else setTurning(true);
+
             if (player === "1") {
                 switch (e.key) {
                     case "ArrowUp":
-                        updateStateInFirebase({ ...state, direction1: { x: 0, y: -1 } });
+                        if (state.snake1.length === 1 || state.direction1.y === 0) {
+                            updateStateInFirebase({ ...state, direction1: { x: 0, y: -1 } });
+                        }
                         break;
                     case "ArrowDown":
-                        updateStateInFirebase({ ...state, direction1: { x: 0, y: 1 } });
+                        if (state.snake1.length === 1 || state.direction1.y === 0) {
+                            updateStateInFirebase({ ...state, direction1: { x: 0, y: 1 } });
+                        }
                         break;
                     case "ArrowLeft":
-                        updateStateInFirebase({ ...state, direction1: { x: -1, y: 0 } });
+                        if (state.snake1.length === 1 || state.direction1.x === 0) {
+                            updateStateInFirebase({ ...state, direction1: { x: -1, y: 0 } });
+                        }
                         break;
                     case "ArrowRight":
-                        updateStateInFirebase({ ...state, direction1: { x: 1, y: 0 } });
+                        if (state.snake1.length === 1 || state.direction1.x === 0) {
+                            updateStateInFirebase({ ...state, direction1: { x: 1, y: 0 } });
+                        }
                         break;
                     default:
                 }
             } else if (player === "2") {
                 switch (e.key) {
                     case "ArrowUp":
-                        updateStateInFirebase({ ...state, direction2: { x: 0, y: -1 } });
+                        if (state.snake2.length === 1 || state.direction2.y === 0) {
+                            updateStateInFirebase({ ...state, direction2: { x: 0, y: -1 } });
+                        }
                         break;
                     case "ArrowDown":
-                        updateStateInFirebase({ ...state, direction2: { x: 0, y: 1 } });
+                        if (state.snake2.length === 1 || state.direction2.y === 0) {
+                            updateStateInFirebase({ ...state, direction2: { x: 0, y: 1 } });
+                        }
                         break;
                     case "ArrowLeft":
-                        updateStateInFirebase({ ...state, direction2: { x: -1, y: 0 } });
+                        if (state.snake2.length === 1 || state.direction2.x === 0) {
+                            updateStateInFirebase({ ...state, direction2: { x: -1, y: 0 } });
+                        }
                         break;
                     case "ArrowRight":
-                        updateStateInFirebase({ ...state, direction2: { x: 1, y: 0 } });
+                        if (state.snake2.length === 1 || state.direction2.x === 0) {
+                            updateStateInFirebase({ ...state, direction2: { x: 1, y: 0 } });
+                        }
                         break;
                     default:
                 }
@@ -104,7 +124,7 @@ const GameBoard2P = ({ player }) => {
 
         document.addEventListener("keydown", handleKeyDown);
         return () => document.removeEventListener("keydown", handleKeyDown);
-    }, [player, state]);
+    }, [player, state, turning]);
 
     // Gestionar moviment de les serps i comprovar col·lisions
     useEffect(() => {
@@ -182,6 +202,8 @@ const GameBoard2P = ({ player }) => {
 
             // Actualitzar l'estat a firebase
             updateStateInFirebase(newState);
+
+            setTurning(false);
         };
 
         const interval = setInterval(moveSnakes, 200);
