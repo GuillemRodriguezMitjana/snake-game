@@ -61,6 +61,22 @@ const GameBoard = () => {
         return () => document.removeEventListener('keydown', handleKeyDown);
     }, []);
 
+    const generateFoodPosition = () => {
+        let newFoodPosition;
+        let isFoodOnSnake = true;
+
+        while (isFoodOnSnake) {
+            newFoodPosition = {
+                x: Math.floor(Math.random() * boardSize),
+                y: Math.floor(Math.random() * boardSize),
+            }
+
+            isFoodOnSnake = snake.some((segment) => segment.x === newFoodPosition.x && segment.y === newFoodPosition.y)
+        }
+
+        return newFoodPosition;
+    }
+
     useEffect(() => {
         if (gameOver || !gameStarted) return;
 
@@ -85,10 +101,7 @@ const GameBoard = () => {
 
             // Check for food
             if (newHead.x === food.x && newHead.y === food.y) {
-                setFood({
-                    x: Math.floor(Math.random() * boardSize),
-                    y: Math.floor(Math.random() * boardSize)
-                });
+                setFood(generateFoodPosition());
                 setScore(score + 1);
             } else {
                 newSnake.pop();
