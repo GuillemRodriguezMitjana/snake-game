@@ -5,6 +5,9 @@ import { ref, onValue, set, onDisconnect, get } from "firebase/database";
 // Base de dades firebase
 import database from "../firebase";
 
+// API Client
+import apiClient from "../api";
+
 // Estils
 import "./GameBoard2P.css";
 
@@ -25,6 +28,15 @@ const initialState = {
     countdown: 3,
 }
 
+// Funció per enviar la puntuació a la API
+const sendScoreToAPI = async (playerName, score) => {
+    try {
+        await apiClient.put(`/score?playerName=${playerName}&score=${score}`);
+    } catch (error) {
+        console.error("Error sending score:", error);
+    }
+}
+
 const GameBoard2P = ({ player }) => {
     // Carregar estat inicial
     const [state, setState] = useState(initialState);
@@ -33,6 +45,14 @@ const GameBoard2P = ({ player }) => {
     const [snake2Active, setSnake2Active] = useState(false);
     const [playerName, setPlayerName] = useState("");
     const [gameStarted, setGameStarted] = useState(false);
+
+    // Enviar la puntuació quan s'acabi la partida
+    useEffect(() => {
+        if (state.gameOver) {
+            const playerScore = player === "1" ? state.score1 : state.score2;
+            sendScoreToAPI(playerName, playerScore);
+        }
+    }, [player, playerName, state.gameOver, state.score1, state.score2]);
 
     // Activar la serp corresponent en cas de no estar activa
     useEffect(() => {

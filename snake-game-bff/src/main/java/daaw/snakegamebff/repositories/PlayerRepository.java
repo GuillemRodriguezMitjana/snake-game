@@ -9,6 +9,7 @@ import java.util.Optional;
 @Repository
 public interface PlayerRepository extends JpaRepository<Player, Integer> {
 
+    // Buscar per nom (id)
     Optional<Player> findByName(String name);
 
 }
