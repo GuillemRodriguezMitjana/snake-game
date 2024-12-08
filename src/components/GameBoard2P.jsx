@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { ref, onValue, set } from "firebase/database";
+import { ref, onValue, set, onDisconnect, get } from "firebase/database";
 
 // Base de dades firebase
 import database from "../firebase";
@@ -29,7 +29,55 @@ const GameBoard2P = ({ player }) => {
     // Carregar estat inicial
     const [state, setState] = useState(initialState);
     const [turning, setTurning] = useState(false);
+    const [snake1Active, setSnake1Active] = useState(false);
+    const [snake2Active, setSnake2Active] = useState(false);
 
+    // Activar la serp corresponent en cas de no estar activa
+    useEffect(() => {
+        const snakeRef = ref(database, `snake${player}Active`);
+    
+        // Comprovar si ja està activa, és a dir, ja l'està utilitzant un altre jugador
+        get(snakeRef).then((snapshot) => {
+            if (snapshot.val()) {
+                window.location.href = "/";
+                alert("This player is already connected!");
+            } else {
+                set(snakeRef, true);
+                onDisconnect(snakeRef).set(false);
+            }
+        }).catch((error) => {
+            console.error("Error checking snake activity:", error);
+        });
+    }, [player]);
+
+    // Comprovar que les dues serps estiguin actives
+    useEffect(() => {
+        const snake1Ref = ref(database, "snake1Active");
+        const snake2Ref = ref(database, "snake2Active");
+
+        // Actualitzar canvis d'activitat de la serp 1
+        const unsubscribe1 = onValue(snake1Ref, (snapshot) => {
+            setSnake1Active(snapshot.val());
+        });
+
+        // Actualitzar canvis d'activitat de la serp 2
+        const unsubscribe2 = onValue(snake2Ref, (snapshot) => {
+            setSnake2Active(snapshot.val());
+        });
+
+        return () => {
+            unsubscribe1();
+            unsubscribe2();
+        }
+    }, []);
+
+    // Reiniciar el joc quan un jugador es desconnecti
+    useEffect(() => {
+        if (!snake1Active || !snake2Active) {
+            updateStateInFirebase(initialState);
+        }
+    }, [snake1Active, snake2Active])
+    
     // Obtenir estat de firebase i subscriure's per obtenir nous canvis
     useEffect(() => {
         const stateRef = ref(database, "gameState");
@@ -39,10 +87,10 @@ const GameBoard2P = ({ player }) => {
                 setState(data);
             }
         });
-
+        
         return () => unsubscribe();
     }, []);
-
+    
     // Funció per actualitzar l'estat a firebase
     const updateStateInFirebase = (newState) => {
         const stateRef = ref(database, "gameState");
@@ -56,6 +104,8 @@ const GameBoard2P = ({ player }) => {
 
     // Countdown inicial de 3 segons
     useEffect(() => {
+        if (!snake1Active || !snake2Active) return;
+
         if (state.countdown === 0) updateStateInFirebase({ ...state, gameStarted: true });
         else {
             const timer = setInterval(() => {
@@ -63,11 +113,13 @@ const GameBoard2P = ({ player }) => {
             }, 1000);
             return () => clearInterval(timer);
         }
-    }, [state]);
+    }, [state, snake1Active, snake2Active]);
 
     // Gestionar les tecles per a les serps
     useEffect(() => {
         const handleKeyDown = (e) => {
+            if (state.gameOver || !state.gameStarted) return;
+
             if (turning) return;
             else setTurning(true);
 
@@ -223,7 +275,12 @@ const GameBoard2P = ({ player }) => {
         <div>
             <h3 className={`player-title-${player}`}>Player {player}</h3>
             <div className="board-2p">
-                {state.countdown > 0 && !state.gameStarted && 
+                {(!snake1Active || !snake2Active) && 
+                    <div className="waiting-message">
+                        {snake1Active ? "Waiting for Player 2..." : "Waiting for Player 1..."}
+                    </div>
+                }
+                {state.countdown > 0 && !state.gameStarted && snake1Active && snake2Active && 
                     <div className="countdown">
                         {state.countdown}
                     </div>
@@ -254,7 +311,7 @@ const GameBoard2P = ({ player }) => {
                     );
                     })
                 )}
-                {state.gameOver && (
+                {state.gameOver && snake1Active && snake2Active && (
                     <div className="game-over">
                         <div className="game-over-title">Game Over</div>
                         {state.score1 > state.score2 ? (
