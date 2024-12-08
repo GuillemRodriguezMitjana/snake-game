@@ -33,6 +33,11 @@ const TopScores = () => {
         return <div>Loading...</div>;
     }
 
+    // Si no hi ha cap jugador amb puntuacions, mostrar un missatge
+    if (topScores.length === 0) {
+        return <div>No scores available yet!</div>;
+    }
+
     return (
         <div className="top-scores">
             <h2>Top Scores</h2>
