@@ -1,6 +1,5 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import { ref, onValue, set } from "firebase/database";
 
 // Base de dades firebase
@@ -10,7 +9,7 @@ import database from "../firebase";
 import "./GameBoard2P.css";
 
 // Mida del tauler
-const boardSize = 25;
+const boardSize = 21;
 
 // Estat inicial
 const initialState = {
@@ -63,7 +62,7 @@ const GameBoard2P = ({ player }) => {
             }, 1000);
             return () => clearInterval(timer);
         }
-    }, [state.countdown]);
+    }, [state]);
 
     // Gestionar les tecles per a les serps
     useEffect(() => {
@@ -245,5 +244,10 @@ const GameBoard2P = ({ player }) => {
         </div>
     );
 };
+
+// Validar variable 'player' per a que sigui 1 o 2
+GameBoard2P.propTypes = {
+    player: PropTypes.oneOf(["1", "2"]).isRequired,
+}
 
 export default GameBoard2P;
