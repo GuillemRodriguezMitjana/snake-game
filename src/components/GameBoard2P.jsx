@@ -31,9 +31,13 @@ const GameBoard2P = ({ player }) => {
     const [turning, setTurning] = useState(false);
     const [snake1Active, setSnake1Active] = useState(false);
     const [snake2Active, setSnake2Active] = useState(false);
+    const [playerName, setPlayerName] = useState("");
+    const [gameStarted, setGameStarted] = useState(false);
 
     // Activar la serp corresponent en cas de no estar activa
     useEffect(() => {
+        if (!gameStarted) return;
+
         const snakeRef = ref(database, `snake${player}Active`);
     
         // Comprovar si ja està activa, és a dir, ja l'està utilitzant un altre jugador
@@ -48,7 +52,7 @@ const GameBoard2P = ({ player }) => {
         }).catch((error) => {
             console.error("Error checking snake activity:", error);
         });
-    }, [player]);
+    }, [player, gameStarted]);
 
     // Comprovar que les dues serps estiguin actives
     useEffect(() => {
@@ -271,68 +275,88 @@ const GameBoard2P = ({ player }) => {
         return "";
     }
 
+    // Funció per gestionar el formulari de nom
+    const handleNameSubmit = (e) => {
+        e.preventDefault();
+        
+        setPlayerName(e.target.elements.name.value);
+
+        setGameStarted(true);
+    };
+
     return (
         <div>
-            <h3 className={`player-title-${player}`}>Player {player}</h3>
-            <div className="board-2p">
-                {(!snake1Active || !snake2Active) && 
-                    <div className="waiting-message">
-                        {snake1Active ? "Waiting for Player 2..." : "Waiting for Player 1..."}
-                    </div>
-                }
-                {state.countdown > 0 && !state.gameStarted && snake1Active && snake2Active && 
-                    <div className="countdown">
-                        {state.countdown}
-                    </div>
-                }
-                <div className="score-2p">
-                    <p>Player 1: <span className="score-1">{state.score1}</span></p>
-                    <p>Player 2: <span className="score-2">{state.score2}</span></p>
-                </div>
-                {Array.from({ length: boardSize }).map((_, row) =>
-                    Array.from({ length: boardSize }).map((_, col) => {
-                    const isSnake1 = state.snake1.some((segment) => segment.x === col && segment.y === row);
-                    const isSnake2 = state.snake2.some((segment) => segment.x === col && segment.y === row);
-                    const isFood = state.food.x === col && state.food.y === row;
+            {!gameStarted &&
+                <form onSubmit={handleNameSubmit}>
+                    <label htmlFor="name">Enter your name: </label>
+                    <input type="text" id="name" placeholder="Your Name" required />
+                    <button type="submit">Start Game</button>
+                </form>
+            }
+            {gameStarted &&
+                <>
+                    <h3 className={`player-title-${player}`}>Player {player} <span className={`player-name-${player}`}>{playerName}</span></h3>
+                    <div className="board-2p">
+                        {(!snake1Active || !snake2Active) && 
+                            <div className="waiting-message">
+                                {snake1Active ? "Waiting for Player 2..." : "Waiting for Player 1..."}
+                            </div>
+                        }
+                        {state.countdown > 0 && !state.gameStarted && snake1Active && snake2Active && 
+                            <div className="countdown">
+                                {state.countdown}
+                            </div>
+                        }
+                        <div className="score-2p">
+                            <p>Player 1: <span className="score-1">{state.score1}</span></p>
+                            <p>Player 2: <span className="score-2">{state.score2}</span></p>
+                        </div>
+                        {Array.from({ length: boardSize }).map((_, row) =>
+                            Array.from({ length: boardSize }).map((_, col) => {
+                            const isSnake1 = state.snake1.some((segment) => segment.x === col && segment.y === row);
+                            const isSnake2 = state.snake2.some((segment) => segment.x === col && segment.y === row);
+                            const isFood = state.food.x === col && state.food.y === row;
 
-                    return (
-                        <div
-                            key={`${row}-${col}`}
-                            className={`cell ${
-                                isSnake1
-                                ? `snake1 ${row === state.snake1[0].y && col === state.snake1[0].x ? getHeadDirectionClass(1) : ""}`
-                                : isSnake2
-                                ? `snake2 ${row === state.snake2[0].y && col === state.snake2[0].x ? getHeadDirectionClass(2) : ""}`
-                                : isFood
-                                ? "food"
-                                : ""
-                            }`}
-                        />
-                    );
-                    })
-                )}
-                {state.gameOver && snake1Active && snake2Active && (
-                    <div className="game-over">
-                        <div className="game-over-title">Game Over</div>
-                        {state.score1 > state.score2 ? (
-                            <div className="winner-message">
-                                <i className="fa-solid fa-trophy"></i>
-                                Player 1
-                            </div>
-                        ) : state.score2 > state.score1 ? (
-                            <div className="winner-message">
-                                <i className="fa-solid fa-trophy"></i>
-                                Player 2
-                            </div>
-                        ) : (
-                            <div className="winner-message">Draw!</div>
+                            return (
+                                <div
+                                    key={`${row}-${col}`}
+                                    className={`cell ${
+                                        isSnake1
+                                        ? `snake1 ${row === state.snake1[0].y && col === state.snake1[0].x ? getHeadDirectionClass(1) : ""}`
+                                        : isSnake2
+                                        ? `snake2 ${row === state.snake2[0].y && col === state.snake2[0].x ? getHeadDirectionClass(2) : ""}`
+                                        : isFood
+                                        ? "food"
+                                        : ""
+                                    }`}
+                                />
+                            );
+                            })
                         )}
-                        <button onClick={restartGame}>
-                            <i className="fa-solid fa-arrow-rotate-left"></i>
-                        </button>
+                        {state.gameOver && snake1Active && snake2Active && (
+                            <div className="game-over">
+                                <div className="game-over-title">Game Over</div>
+                                {state.score1 > state.score2 ? (
+                                    <div className="winner-message">
+                                        <i className="fa-solid fa-trophy"></i>
+                                        Player 1
+                                    </div>
+                                ) : state.score2 > state.score1 ? (
+                                    <div className="winner-message">
+                                        <i className="fa-solid fa-trophy"></i>
+                                        Player 2
+                                    </div>
+                                ) : (
+                                    <div className="winner-message">Draw!</div>
+                                )}
+                                <button onClick={restartGame}>
+                                    <i className="fa-solid fa-arrow-rotate-left"></i>
+                                </button>
+                            </div>
+                        )}
                     </div>
-                )}
-            </div>
+                </>
+            }
         </div>
     );
 };

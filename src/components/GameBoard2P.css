@@ -138,3 +138,35 @@
     box-shadow: 0 0 30px rgba(0, 0, 0, 1);
     text-align: center;
 }
+
+.player-name-1,
+.player-name-2 {
+    text-shadow: 2px 2px 0px #aaa;
+}
+
+.player-name-1 {
+    color: var(--player-1-main);
+}
+
+.player-name-2 {
+    color: var(--player-2-main);
+}
+
+form {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+}
+
+form input {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+    padding: 10px;
+}
+
+form button {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+    padding: 10px;
+    cursor: pointer;
+}
