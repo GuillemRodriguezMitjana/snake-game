@@ -12,4 +12,7 @@ public interface PlayerRepository extends JpaRepository<Player, Integer> {
     // Buscar per nom (id)
     Optional<Player> findByName(String name);
 
+    // Eliminar jugador pel seu nom
+    void deleteByName(String name);
+
 }

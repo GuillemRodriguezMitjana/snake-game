@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api/v1/player")
 public class PlayerController {
 
@@ -68,6 +67,20 @@ public class PlayerController {
     @GetMapping("/top-scores")
     public ResponseEntity<List<Player>> getTopPlayers() {
         return ResponseEntity.ok(playerService.getTopPlayers());
+    }
+
+    /**
+     * Endpoint per eliminar un jugador a partir del seu nom.
+     * @param playerName Nom del jugador
+     */
+    @DeleteMapping("/delete/{playerName}")
+    public ResponseEntity<String> deletePlayer(@PathVariable String playerName) {
+        Optional<Player> player = playerService.getPlayerByName(playerName);
+        if (player.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        playerService.deletePlayerByName(player.get().getName());
+        return ResponseEntity.noContent().build();
     }
 
 }

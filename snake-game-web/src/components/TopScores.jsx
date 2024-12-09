@@ -51,7 +51,7 @@ const TopScores = () => {
                 </thead>
                 <tbody>
                     {topScores.map((player, index) => (
-                        <tr key={player.id}>
+                        <tr key={index}>
                             <td>{index + 1}</td>
                             <td>{player.name}</td>
                             <td>{player.bestScore}</td>
